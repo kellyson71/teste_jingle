@@ -163,7 +163,6 @@
         .secondary-topbar .icon {
             display: none;
         }
-        
         .station-title {
             text-align: center;
             padding: 30px;
@@ -190,7 +189,6 @@
             margin-top: 10px;
             color: #d4f0ff;
         }
-        
         .footer {
             width: 100%;
             background-color: #0d9ae6;
@@ -200,15 +198,13 @@
             padding: none;
             margin-top: 80px;
         }
-
         .topbar img, .footer img {
             width: 100%;
             display: block;
         }
-
         .topbar, .secondary-topbar {
-            position: relative; /* Mude de fixed para relative */
-            top: 0; /* Certifique-se de que o topo esteja alinhado corretamente */
+    position: relative; /* Mude de fixed para relative */
+    top: 0; /* Certifique-se de que o topo esteja alinhado corretamente */
         }
 
         .footer .social-icons {
@@ -233,8 +229,9 @@
         }
 
         .social-icons a {
-            text-decoration: none; /* Remove sublinhado dos ícones */
-        }
+    text-decoration: none; /* Remove sublinhado dos ícones */
+}
+
 
         @media screen and (max-width: 600px) {
             .topbar img {
@@ -251,6 +248,7 @@
                 display: block;
             }
         
+
             .secondary-topbar.responsive {
                 position: relative;
             }
@@ -274,7 +272,7 @@
     </header>
 
     <nav class="secondary-topbar" id="myTopnav">
-        <a href="../index.php" class="active">Início</a>
+        <a href="../index.php" class="active">Inicio</a>
         <a href="./todas_noticias.php">Blog Elas por Nós</a>
         <a href="./breve.html">Estação 55</a>
         <a href="./flash_55.php">Flash 55</a>
@@ -285,123 +283,132 @@
             <i class="fa fa-bars"></i>
         </a>
     </nav>
-    
     <div class="station-title">
         <h1>Contato</h1>
     </div>
 
-    <div class="contact-container">
-        <h2>Formulário de Contato</h2>
-        <?php
-        // Verifica se o formulário foi enviado via método POST
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Configuração dos parâmetros de conexão com o banco de dados
-            $servername = "srv1437.hstgr.io";
-            $username = "u928415167_root";
-            $password = "Kellys0n_";
-            $dbname = "u928415167_plano";
+<div class="contact-container">
+    <h2>Formulário de Contato</h2>
+    <?php
+    // Verifica se o formulário foi enviado via método POST
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Configuração dos parâmetros de conexão com o banco de dados
+        $servername = "srv1437.hstgr.io";
+        $username = "u928415167_root";
+        $password = "Kellys0n_";
+        $dbname = "u928415167_plano";
 
-            // Criação de conexão com o banco de dados
-            $conn = new mysqli($servername, $username, $password, $dbname);
+        // Criação de conexão com o banco de dados
+        $conn = new mysqli($servername, $username, $password, $dbname);
 
-            // Verifica se houve erro na conexão
-            if ($conn->connect_error) {
-                $message = "Conexão falhou: " . $conn->connect_error;
-                $message_type = "error";
+        // Verifica se houve erro na conexão
+        if ($conn->connect_error) {
+            $message = "Conexão falhou: " . $conn->connect_error;
+            $message_type = "error";
+        } else {
+            // Coleta dos dados do formulário
+            $nome = $_POST['nome'];
+            $telefone = $_POST['telefone'];
+            $email = $_POST['email'];
+            $assunto = $_POST['assunto'];
+            $mensagem = $_POST['mensagem'];
+
+            // Preparação e execução da query para inserção dos dados no banco
+            $sql = "INSERT INTO contatos (nome, telefone, email, assunto, mensagem) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssss", $nome, $telefone, $email, $assunto, $mensagem);
+
+            // Verifica se a execução da query foi bem-sucedida
+            if ($stmt->execute()) {
+                $message = "Mensagem enviada com sucesso!";
+                $message_type = "success";
             } else {
-                // Coleta dos dados do formulário
-                $nome = $_POST['nome'];
-                $telefone = $_POST['telefone'];
-                $email = $_POST['email'];
-                $assunto = $_POST['assunto'];
-                $mensagem = $_POST['mensagem'];
-
-                // Preparação e execução da query para inserção dos dados no banco
-                $sql = "INSERT INTO contatos (nome, telefone, email, assunto, mensagem) VALUES (?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("sssss", $nome, $telefone, $email, $assunto, $mensagem);
-
-                // Verifica se a execução da query foi bem-sucedida
-                if ($stmt->execute()) {
-                    $message = "Mensagem enviada com sucesso!";
-                    $message_type = "success";
-                } else {
-                    $message = "Erro ao enviar mensagem: " . $stmt->error;
-                    $message_type = "error";
-                }
-
-                // Fecha a conexão com o banco de dados
-                $stmt->close();
-                $conn->close();
+                $message = "Erro ao enviar mensagem: " . $stmt->error;
+                $message_type = "error";
             }
 
-            // Exibe o modal com a mensagem de feedback
-            echo "<div id='myModal' class='modal'>
-                    <div class='modal-content'>
-                        <span class='close'>&times;</span>
-                        <p>{$message}</p>
-                    </div>
-                  </div>";
+            // Fecha a conexão com o banco de dados
+            $stmt->close();
+            $conn->close();
         }
-        ?>
-        <!-- Formulário de contato -->
-        <form action="contato.php" method="POST">
-            <label for="nome">Seu nome *</label>
-            <input type="text" id="nome" name="nome" required>
 
-            <label for="telefone">Telefone Para Contato *</label>
-            <input type="text" id="telefone" name="telefone" required>
+        // Exibe o modal com a mensagem de feedback
+        echo "<div id='myModal' class='modal'>
+                <div class='modal-content'>
+                    <span class='close'>&times;</span>
+                    <p>{$message}</p>
+                </div>
+              </div>";
+    }
+    ?>
+    <!-- Formulário de contato -->
+    <form action="contato.php" method="POST">
+        <label for="nome">Seu nome *</label>
+        <input type="text" id="nome" name="nome" required>
 
-            <label for="email">Seu e-mail *</label>
-            <input type="email" id="email" name="email" required>
+        <label for="telefone">Telefone Para Contato *</label>
+        <input type="text" id="telefone" name="telefone" required>
 
-            <label for="assunto">Assunto *</label>
-            <input type="text" id="assunto" name="assunto" required>
+        <label for="email">Seu e-mail *</label>
+        <input type="email" id="email" name="email" required>
 
-            <label for="mensagem">Sua mensagem (opcional)</label>
-            <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+        <label for="assunto">Assunto *</label>
+        <input type="text" id="assunto" name="assunto" required>
 
-            <button type="submit">Enviar</button>
-        </form>
-    </div>
-    
-    <footer class="footer">
-        <div class="social-icons">
-            <a href="https://www.instagram.com" target="_blank">
-                <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.facebook.com" target="_blank">
-                <i class="fab fa-facebook-f"></i>
-            </a>
-        </div>
+        <label for="mensagem">Sua mensagem (opcional)</label>
+        <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+
+        <button type="submit">Enviar</button>
+    </form>
+</div>
+<footer class="footer">
+    <div class="social-icons">
+    <a href="https://www.instagram.com" target="_blank">
+        <i class="fab fa-instagram"></i>
+    </a>
+    <a href="https://www.facebook.com" target="_blank">
+        <i class="fab fa-facebook-f"></i>
+    </a>
+</div>
+
+
         <p>&copy; 2024 Mari e Lara 55. Todos os direitos reservados. CNPJ: 56.512.698/0001-89.</p>
+        
         <img src="../assets/Rodape site - 1920 x 300 px - Mariana e Lara.png" alt="Rodapé do site">
+
     </footer>
-
-    <script>
-        // Seleciona o modal e o botão de fechar
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
-
-        // Exibe o modal caso ele exista na página
-        if (modal) {
-            modal.style.display = "block";
+<script>
+    // Seleciona o modal e o botão de fechar
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+    
+    function toggleMenu() {
+        var x = document.getElementById("myTopnav");
+        if (x.className === "secondary-topbar") {
+            x.className += " responsive";
+        } else {
+            x.className = "secondary-topbar";
         }
+    }
+    // Exibe o modal caso ele exista na página
+    if (modal) {
+        modal.style.display = "block";
+    }
 
-        // Fecha o modal ao clicar no "X" e recarrega a página
-        span.onclick = function() {
+    // Fecha o modal ao clicar no "X" e recarrega a página
+    span.onclick = function() {
+        modal.style.display = "none";
+        window.location.href = "../index.php";
+    }
+
+    // Fecha o modal ao clicar fora dele e recarrega a página
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
             window.location.href = "../index.php";
         }
-
-        // Fecha o modal ao clicar fora dele e recarrega a página
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                window.location.href = "../index.php";
-            }
-        }
-    </script>
+    }
+</script>
 
 </body>
 </html>
